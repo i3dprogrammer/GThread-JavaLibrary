@@ -39,11 +39,17 @@ public class ScheduleGThread<T>{
     }
     
     public void start(){
-        
+        Runnable scheduleRunnable = () -> {
+            for (GThread<T> M_GTHREADS_ARRAY1 : M_GTHREADS_ARRAY) {
+                M_GTHREADS_ARRAY1.start();
+                updateWorkers(INCREASE_ONE_WORKER_FROM_WORKERS);
+                while(mCurrentWorker >= M_WORKERS_LIMIT);
+            }
+        };
     }
     
     public void onItemFinished(){
-        
+        updateWorkers(DECREASE_ONE_WORKER_FROM_WORKERS);
     }
     
     private synchronized void updateWorkers(int workersChanger){
