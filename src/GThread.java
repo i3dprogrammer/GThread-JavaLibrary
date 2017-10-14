@@ -10,7 +10,9 @@
  */
 public abstract class GThread<T> extends GThreadController implements GSheduler<T>{
     
+    private static final String M_EMPTY_VALUE = "";
     private Thread mThread;
+    private String mGThreadName;
     private boolean mTerminated;
     
     public GThread(){
@@ -32,35 +34,48 @@ public abstract class GThread<T> extends GThreadController implements GSheduler<
     }
     
     public void join() throws InterruptedException{
-        mThread.join();
+        if(mThread != null)
+            mThread.join();
     }
     
     public void join(long millis) throws InterruptedException{
-        mThread.join(millis);
+        if(mThread != null)
+            mThread.join(millis);
     }
     
     public void join(long millis, int nanos) throws InterruptedException{
-        mThread.join(millis, nanos);
+        if(mThread != null)
+            mThread.join(millis, nanos);
     }
     
     public void interrupt(){
-        mThread.interrupt();
+        if(mThread != null)
+            mThread.interrupt();
     }
     
     public boolean isAlive(){
-        return mThread.isAlive();
+        if(mThread != null)
+            return mThread.isAlive();
+        else
+            return false;
     }
     
     public boolean isInterrupted(){
-        return mThread.isInterrupted();
+        if(mThread != null)
+            return mThread.isInterrupted();
+        else
+            return false;
     }
     
     public String getName(){
-        return mThread.getName();
+        if(mGThreadName != null)
+            return mGThreadName;
+        else
+            return M_EMPTY_VALUE;
     }
     
     public void setName(String name){
-        mThread.setName(name);
+        mGThreadName = name;
     }
     
     public boolean isTerminated(){

@@ -14,7 +14,8 @@ public abstract class GThreadController<T>{
 
     
     protected void notifyChanging(){
-        mScheduleGThread.onItemFinished();
+        if(mScheduleGThread != null)
+            mScheduleGThread.onItemFinished();
     }
     
     protected void setScheduleThread(ScheduleGThread<T> scheduleGThread){

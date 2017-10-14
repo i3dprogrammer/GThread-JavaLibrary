@@ -1,6 +1,4 @@
 
-import java.util.ArrayList;
-
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -19,18 +17,17 @@ public class ScheduleGThread<T>{
     
     private final GThread<T>[] M_GTHREADS_ARRAY;
     private final int M_WORKERS_LIMIT;
-    private final Thread M_SCHEDULE_THREAD; 
+    private Thread mScheduleGThread; 
     private int mCurrentWorker;
     
-    public ScheduleGThread(int workers, GThread<T>... gThread) throws SchedulGThreadException{
+    public ScheduleGThread(int workers, GThread<T>... gThread) throws ScheduleGThreadException{
         M_GTHREADS_ARRAY = gThread;
         M_WORKERS_LIMIT = workers;
-        M_SCHEDULE_THREAD = new Thread();
 
         init();
     }
     
-    private void init() throws SchedulGThreadException{
+    private void init() throws ScheduleGThreadException{
         for(final GThread<T> G_THREAD : M_GTHREADS_ARRAY){
             G_THREAD.setScheduleThread(this);
         }
@@ -39,13 +36,14 @@ public class ScheduleGThread<T>{
     }
     
     public void start(){
-        Runnable scheduleRunnable = () -> {
+        mScheduleGThread = new Thread(() -> {
             for (GThread<T> M_GTHREADS_ARRAY1 : M_GTHREADS_ARRAY) {
                 M_GTHREADS_ARRAY1.start();
                 updateWorkers(INCREASE_ONE_WORKER_FROM_WORKERS);
                 while(mCurrentWorker >= M_WORKERS_LIMIT);
             }
-        };
+        });
+        mScheduleGThread.run();
     }
     
     public void onItemFinished(){
@@ -56,12 +54,12 @@ public class ScheduleGThread<T>{
        mCurrentWorker += workersChanger; 
     }
     
-    private void checkGThreadValidation() throws SchedulGThreadException{
+    private void checkGThreadValidation() throws ScheduleGThreadException{
         for(GThread<T> gThread : M_GTHREADS_ARRAY){
             if(gThread.isAlive())
-                throw new SchedulGThreadException(SchedulGThreadException.ALIVE_THREAD_EXCEPTION_MESSAGE);
+                throw new ScheduleGThreadException(ScheduleGThreadException.ALIVE_THREAD_EXCEPTION_MESSAGE);
             else if(gThread.isTerminated())
-                throw new SchedulGThreadException(SchedulGThreadException.TERMINATED_THREAD_EXCEPTION_MESSAGE);
+                throw new ScheduleGThreadException(ScheduleGThreadException.TERMINATED_THREAD_EXCEPTION_MESSAGE);
         }
     }
 }
