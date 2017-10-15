@@ -1,9 +1,3 @@
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-
-
 /*
  * Copyright [2017] Mohamed Nagy Mostafa Mohamed
  *
@@ -24,28 +18,25 @@ import java.util.Arrays;
  *
  * @author mohamednagy
  */
-public class ScheduleGThread<T>{
+public abstract class ScheduleGThread<T>{
     
     private static final int INTIAL_WORKERS_NUMBER = 0;
-    private static final int PROCESS_IS_NOT_SUCCESS = -1;
     private static final int DECREASE_ONE_WORKER_FROM_WORKERS = -1;
     private static final int INCREASE_ONE_WORKER_FROM_WORKERS = 1;
     
-    private final ArrayList<GThread<T>> M_GTHREADS_ARRAY;
+    private final GThread<T>[] M_GTHREADS_ARRAY;
     private final int M_WORKERS_LIMIT;
     private Thread mScheduleGThread; 
     private int mCurrentWorker;
-    private boolean mScheduleGThreadRunningState;
     
     public ScheduleGThread(int workers, GThread<T>... gThread) throws ScheduleGThreadException{
         M_WORKERS_LIMIT = workers;
-        M_GTHREADS_ARRAY = new ArrayList<>();
-        mScheduleGThreadRunningState = false;
-        init(gThread);
+        M_GTHREADS_ARRAY = gThread;
+        init();
     }
     
-    private void init(GThread<T>... gThread) throws ScheduleGThreadException{
-        for(final GThread<T> G_THREAD : gThread)
+    private void init() throws ScheduleGThreadException{
+        for(final GThread<T> G_THREAD : M_GTHREADS_ARRAY)
             identifyGThread(G_THREAD);
         
         checkGThreadValidation();
@@ -53,7 +44,6 @@ public class ScheduleGThread<T>{
     }
     
     public void start(){
-        mScheduleGThreadRunningState = true;
         
         mScheduleGThread = new Thread(() -> {
             for (GThread<T> M_GTHREADS_ARRAY1 : M_GTHREADS_ARRAY) {
@@ -64,44 +54,10 @@ public class ScheduleGThread<T>{
         });
         mScheduleGThread.start();
     }
-    
-    public int add(GThread<T> gThread) throws ScheduleGThreadException{
-        if(mScheduleGThreadRunningState){
-            identifyGThread(gThread);
-              
-            if(!mScheduleGThread.isAlive()){
-                start();
-            }          
-            return M_GTHREADS_ARRAY.size() - 1;
-        }else{
-            return PROCESS_IS_NOT_SUCCESS;
-        }
-    }
-    
-    public void remove(int index){
-        M_GTHREADS_ARRAY.remove(index);
-    }
-    
-    public boolean isGThreadAliveAt(int index){
-        if(M_GTHREADS_ARRAY.size() > index){
-            return M_GTHREADS_ARRAY.get(index).isAlive();
-        }else{
-            return false;
-        }
-    }
-    
-    public int gthreadInTaskNumbers(){
-        return M_GTHREADS_ARRAY.size() -1;
-    }
    
-    public int currentRunning(){
-        return mCurrentWorker;
-    }
     
-    public void onItemFinished(int id){
-        updateWorkers(DECREASE_ONE_WORKER_FROM_WORKERS);
-        M_GTHREADS_ARRAY.remove(id);
-        
+    public void onItemFinished(){
+        updateWorkers(DECREASE_ONE_WORKER_FROM_WORKERS);        
     }
     
     private synchronized void updateWorkers(int workersChanger){
@@ -118,7 +74,9 @@ public class ScheduleGThread<T>{
     }
     
     private void identifyGThread(GThread<T> gThread){
-        gThread.setScheduleThread(this, M_GTHREADS_ARRAY.size());
-        M_GTHREADS_ARRAY.add(gThread);
-    }
+        gThread.setScheduleThread(this);
+   }
+    
+    
+    public abstract void onScheduleFinished(GThread<T>[] gThreads);
 }

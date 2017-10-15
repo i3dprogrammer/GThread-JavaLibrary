@@ -14,21 +14,28 @@
  * limitations under the License.
  */
 
-/**
- *
- * @author mohamednagy
- */
 public abstract class GThreadController<T>{
     
-    private ScheduleGThread<T> mScheduleGThread;
-
+    protected static final int G_THREAD_WITHOUT_SCHEDULE = 1;
+    protected static final int G_THREAD_WITH_SCHEDULE = 2;
+    protected static final int G_THREAD_WITH_LINKED_SCHEDULE = 3;
     
-    protected void notifyChanging(int gthreadID){
+    private ScheduleGThread<T> mScheduleGThread;
+  
+    
+    protected void notifyChanging(){
         if(mScheduleGThread != null)
-            mScheduleGThread.onItemFinished(gthreadID);
+            mScheduleGThread.onItemFinished();
     }
     
-    protected void setScheduleThread(ScheduleGThread<T> scheduleGThread, int id){
+    protected void setScheduleThread(ScheduleGThread<T> scheduleGThread){
         mScheduleGThread = scheduleGThread;
+    }
+    
+    protected int getGthreadType(){
+        if(mScheduleGThread == null)
+            return G_THREAD_WITH_SCHEDULE;
+        else
+            return G_THREAD_WITHOUT_SCHEDULE;
     }
 }
