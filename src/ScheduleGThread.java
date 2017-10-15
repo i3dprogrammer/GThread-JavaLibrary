@@ -1,65 +1,101 @@
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/**
+ * Copyright [2017] Mohamed Nagy Mostafa Mohamed
  *
- * @author mohamednagy
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-public class ScheduleGThread<T>{
-    
-    private static final int INTIAL_WORKERS_NUMBER = 0;
-    private static final int DECREASE_ONE_WORKER_FROM_WORKERS = -1;
-    private static final int INCREASE_ONE_WORKER_FROM_WORKERS = 1;
-    
-    private final GThread<T>[] M_GTHREADS_ARRAY;
-    private final int M_WORKERS_LIMIT;
-    private Thread mScheduleGThread; 
-    private int mCurrentWorker;
-    
-    public ScheduleGThread(int workers, GThread<T>... gThread) throws ScheduleGThreadException{
-        M_GTHREADS_ARRAY = gThread;
-        M_WORKERS_LIMIT = workers;
 
+
+public abstract class ScheduleGThread<T> extends GShedule<T>{
+    /**
+     * ScheduleGThread constructor inwhich initialize an initial state of
+     * schedule.
+     * 
+     * @param workers   Number of workers who are going to execute tasks
+     * @param gThread   List of gthreads which must have execute as schedule way
+     */
+    public ScheduleGThread(int workers, GThread<T>... gThread){
+        super(workers, gThread);
         init();
     }
-    
-    private void init() throws ScheduleGThreadException{
-        for(final GThread<T> G_THREAD : M_GTHREADS_ARRAY){
-            G_THREAD.setScheduleThread(this);
-        }
-        checkGThreadValidation();
+    /**
+     * Identify gthreads to it's schedule and set initial value for current
+     * workers.
+     * 
+     * @throws ScheduleGThreadException Exception throws when the list of gthreads
+     *                                  contain threads which run before or is terminated
+     */
+    private void init(){
         mCurrentWorker = INTIAL_WORKERS_NUMBER;
     }
-    
-    public void start(){
+    /**
+     * Start schedule process. Check if all threads in idle mode or not.
+     */
+    @Override
+    public int start(){
+        try {
+            checkGThreadValidation();
+        } catch (ScheduleGThreadException ex) {
+            Logger.getLogger(ScheduleGThread.class.getName()).log(Level.SEVERE, null, ex);
+            return GShedule.G_SCHEDULE_START_FAILED;
+        }
+
         mScheduleGThread = new Thread(() -> {
-            for (GThread<T> M_GTHREADS_ARRAY1 : M_GTHREADS_ARRAY) {
-                M_GTHREADS_ARRAY1.start();
+            for (GThread<T> gThread : M_GTHREADS_ARRAY) {
+                identifyGThread(gThread);
+                gThread.start();
                 updateWorkers(INCREASE_ONE_WORKER_FROM_WORKERS);
                 while(mCurrentWorker >= M_WORKERS_LIMIT);
             }
+            
+            allTasksExceuted();
         });
-        mScheduleGThread.run();
+        mScheduleGThread.start();
+        
+        return GShedule.G_SCHEDULE_START_SUCCESSFULLY;
     }
-    
+    /**
+     * Called when each one of tasks is terminated.
+     */
     public void onItemFinished(){
-        updateWorkers(DECREASE_ONE_WORKER_FROM_WORKERS);
+        updateWorkers(DECREASE_ONE_WORKER_FROM_WORKERS);        
+    }
+    /**
+     * Set schedule as a parent to specific gthread.
+     * @param gThread   Tasks which are going to execute in schedule
+     */
+    private void identifyGThread(GThread<T> gThread){
+        gThread.setScheduleGThread(this);
+   }
+    /**
+     * insure that there's no task is work.
+     */
+    private void allTasksExceuted(){
+      for(GThread<T> gThread : M_GTHREADS_ARRAY){
+          try {
+              gThread.join();
+          } catch (InterruptedException ex) {
+              Logger.getLogger(ScheduleGThread.class.getName()).log(Level.SEVERE, null, ex);
+          }
+      }
+      onScheduleFinished();
     }
     
-    private synchronized void updateWorkers(int workersChanger){
-       mCurrentWorker += workersChanger; 
-    }
-    
-    private void checkGThreadValidation() throws ScheduleGThreadException{
-        for(GThread<T> gThread : M_GTHREADS_ARRAY){
-            if(gThread.isAlive())
-                throw new ScheduleGThreadException(ScheduleGThreadException.ALIVE_THREAD_EXCEPTION_MESSAGE);
-            else if(gThread.isTerminated())
-                throw new ScheduleGThreadException(ScheduleGThreadException.TERMINATED_THREAD_EXCEPTION_MESSAGE);
-        }
-    }
+    /**
+     * Called when schedule tasks are finished completely.
+     */
+    public abstract void onScheduleFinished();
 }
