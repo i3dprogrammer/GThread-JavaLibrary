@@ -15,6 +15,16 @@
  */
 
 public interface GSheduler<T> {
+    
+    /**
+     * Called start method in GThread is called, It contains the GThread
+     * process which GThread have to do and return the output of these process
+     * after GThread process finished.
+     * 
+     * @return  Result object of GThread processes.
+     */
+    abstract T onProgress();
+    
     /**
      * Called when GThread have been finished it's process and 
      * return the process result as a parameter to make programmer
@@ -24,12 +34,5 @@ public interface GSheduler<T> {
      * @param object    The output of the GThread process
      */
     abstract void onFinished(T object);
-    /**
-     * Called start method in GThread is called, It contains the GThread
-     * process which GThread have to do and return the output of these process
-     * after GThread process finished.
-     * 
-     * @return  Result object of GThread processes.
-     */
-    abstract T onProgress();
+    
 }

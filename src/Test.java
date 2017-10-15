@@ -141,25 +141,13 @@ public class Test {
             }
         };
         
-        try {
-            ScheduleGThread<String> scheduleGThread = new ScheduleGThread<>(3,t1, t2);
-            scheduleGThread.start();
-            Thread.sleep(1000);
-            scheduleGThread.add(t3);
-            Util.println("tasks : " + String.valueOf(scheduleGThread.gthreadInTaskNumbers()));
-            Thread.sleep(2000);
-            Util.println("tasks : " + String.valueOf(scheduleGThread.gthreadInTaskNumbers()));
-            scheduleGThread.add(t4);
-            scheduleGThread.add(t5);
-            scheduleGThread.add(t6);
-            Util.println("tasks : " + String.valueOf(scheduleGThread.gthreadInTaskNumbers()));
-            Thread.sleep(6000);
-            scheduleGThread.add(t7);
-            Util.println("tasks : " + String.valueOf(scheduleGThread.gthreadInTaskNumbers()));
-
-        } catch (ScheduleGThreadException ex) {
-            Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
-        }
+           t1.start();
+           t1.join();
+           t2.start();
+           t5.start();
+           t5.join();
+           t3.start();
+        
         
     }
 }

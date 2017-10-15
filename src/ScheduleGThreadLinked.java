@@ -12,9 +12,17 @@ import java.util.ArrayList;
  * @author mohamednagy
  */
 public abstract class ScheduleGThreadLinked<T> extends ScheduleGThread<T>{
-
+    
+    private long mScheduleGThreadId;
+    
     public ScheduleGThreadLinked(int workers, GThread<T>... gThread) throws ScheduleGThreadException {
         super(workers, gThread);
+        init();
+    }
+    
+    private void init(){
+        mScheduleGThreadId = 0;
+        
     }
     
    

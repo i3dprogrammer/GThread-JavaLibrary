@@ -66,10 +66,12 @@ public abstract class ScheduleGThread<T>{
     
     private void checkGThreadValidation() throws ScheduleGThreadException{
         for(GThread<T> gThread : M_GTHREADS_ARRAY){
-            if(gThread.isAlive())
-                throw new ScheduleGThreadException(ScheduleGThreadException.ALIVE_THREAD_EXCEPTION_MESSAGE);
-            else if(gThread.isTerminated())
-                throw new ScheduleGThreadException(ScheduleGThreadException.TERMINATED_THREAD_EXCEPTION_MESSAGE);
+            switch(gThread.gthreadState()){
+                case GThread.G_THREAD_RUNNING:
+                    throw new ScheduleGThreadException(ScheduleGThreadException.ALIVE_THREAD_EXCEPTION_MESSAGE);
+                case GThread.G_THREAD_TERMINATED:
+                    throw new ScheduleGThreadException(ScheduleGThreadException.TERMINATED_THREAD_EXCEPTION_MESSAGE);
+            }
         }
     }
     

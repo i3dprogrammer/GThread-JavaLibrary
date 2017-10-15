@@ -26,11 +26,11 @@ public abstract class GThread<T> extends GThreadController implements GSheduler<
     // The value of GThread name when it's not have specific name.
     private static final String M_EMPTY_VALUE = "";
     // GThread state when gthread is created but it has not started yet.
-    private static final int G_THREAD_IDLE = 0;
+    public static final int G_THREAD_IDLE = 0;
     // GThread state when gthread is runinig.
-    private static final int G_THREAD_RUNNING = 1;
+    public static final int G_THREAD_RUNNING = 1;
     // GThread state when gthread process is finished.
-    private static final int G_THREAD_TERMINATED = 2;
+    public static final int G_THREAD_TERMINATED = 2;
     // Thread which launch within GThread.
     private Thread mThread;
     // Name of GThread which you can get whenever you need.
@@ -42,6 +42,7 @@ public abstract class GThread<T> extends GThreadController implements GSheduler<
     public GThread(){
         // Set GThread state as idle state.
         setGThreadState(G_THREAD_IDLE);
+        
     }
     /**
      * Start GThread process.
@@ -53,7 +54,6 @@ public abstract class GThread<T> extends GThreadController implements GSheduler<
      */
     public void start(){
         launchHandling();
-        handlingProgress();
     }
     /**
      * Launch handling progress of gthread and set gthread
@@ -89,7 +89,6 @@ public abstract class GThread<T> extends GThreadController implements GSheduler<
     private void handlingProgress(){ 
         mThread = new Thread(()->{
             T object = onProgress();
-            notifyChanging();
             setGThreadState(G_THREAD_TERMINATED);
             onFinished(object);
         });

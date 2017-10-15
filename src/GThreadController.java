@@ -34,8 +34,8 @@ public abstract class GThreadController<T>{
     
     protected int getGthreadType(){
         if(mScheduleGThread == null)
-            return G_THREAD_WITH_SCHEDULE;
-        else
             return G_THREAD_WITHOUT_SCHEDULE;
+        else
+            return G_THREAD_WITH_SCHEDULE;
     }
 }
