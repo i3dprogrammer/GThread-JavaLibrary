@@ -26,34 +26,26 @@ public abstract class GThreadController<T>{
     
     private ScheduleGThread<T> mScheduleGThread;
     private ScheduleGThreadLinked<T> mScheduleGThreadLinked;
-    private Long mGThreadId;
+    private GThread<T> mGThread;
     
     protected void notifyChanging(){
         if(mScheduleGThread != null){
             mScheduleGThread.onItemFinished();
 
         }else{
-            mScheduleGThreadLinked.onItemFinished(mGThreadId);
+            mScheduleGThreadLinked.onItemFinished(mGThread);
         }
     }
-    
-    
     
     protected void setScheduleGThread(ScheduleGThread<T> scheduleGThread){
         mScheduleGThread = scheduleGThread;
     }
     
-    protected void setScheduleGThreadLinked(ScheduleGThreadLinked<T> scheduleGThreadLinked, long gthreadId){
+    protected void setScheduleGThreadLinked(ScheduleGThreadLinked<T> scheduleGThreadLinked, GThread<T> gThread){
         mScheduleGThreadLinked = scheduleGThreadLinked;
-        mGThreadId = gthreadId;
+        mGThread = gThread;
     }
-    
-    protected long getGThreadId(){
-        if(mGThreadId != null)
-            return mGThreadId;
-        else
-            return -1;
-    }
+   
     protected int getGthreadType(){
         if(mScheduleGThread != null)
             return G_THREAD_WITH_SCHEDULE;

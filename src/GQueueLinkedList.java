@@ -32,9 +32,6 @@ public class GQueueLinkedList<GThread> extends LinkedList<GThread> {
         return true;
     }
 
-    
-
-   
     public boolean hasNext(Iterator<GThread> gthreads){
         return (synchronizeQueueProcess(CHECK_QUEUE_ITEMS , gthreads) == HAS_ITEMS); 
     }

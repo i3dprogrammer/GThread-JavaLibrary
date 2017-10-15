@@ -1,6 +1,8 @@
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.logging.Level;
@@ -19,13 +21,11 @@ import java.util.logging.Logger;
 public class ScheduleGThreadLinked<T> extends GShedule<T>{
     public static final int SCHEDULE_LINK_ACCEPT_RESPONSE  = 1;
     public static final int SCHEDULE_LINK_REJECT_RESPONSE = -1;
-    public static final int S
     public static final int SCHEDULE_LINK_TASKS_FINISHED = 4;
     public static final int SCHEDULE_LINK_TASKS_RUNNING = 2;
     public static final int SCHEDULE_LINK_TASKS_IDLE = 3;
     
-    private Queue<GThread<T>> mQueueGThreads;
-    private long mGThreadIdCode = 0;
+    private GQueueLinkedList<GThread<T>> mQueueLinkedList;
     private int mSheduleLinkState;
     
     public ScheduleGThreadLinked(int workers, GThread<T>... gThread){
@@ -34,10 +34,9 @@ public class ScheduleGThreadLinked<T> extends GShedule<T>{
     }
     
     private void init(GThread<T>... gThread){
-        mQueueGThreads = new LinkedList<>();
+        mQueueLinkedList = new GQueueLinkedList<>();
         mSheduleLinkState = SCHEDULE_LINK_TASKS_IDLE;
-
-        identifyGThreadAsTasks(gThread);
+        identifyGThreads(gThread);
     }
 
     @Override
@@ -51,8 +50,10 @@ public class ScheduleGThreadLinked<T> extends GShedule<T>{
         }
         
         mScheduleGThread = new Thread(() -> {
-            while(synchronizeQueue())
-                gThread.setScheduleGThreadLinked(this, gThread.getGThreadId());
+            
+            while(mQueueLinkedList.hasNext(mQueueLinkedList.iterator())){
+                GThread<T> gThread = mQueueLinkedList.poll();
+                gThread.setScheduleGThreadLinked(this,gThread);
                 gThread.start();
                 updateWorkers(INCREASE_ONE_WORKER_FROM_WORKERS);
                 while(mCurrentWorker >= M_WORKERS_LIMIT);
@@ -69,8 +70,8 @@ public class ScheduleGThreadLinked<T> extends GShedule<T>{
     public int add(GThread<T> gThread){
         try {
             checkGThreadValidationAt(gThread);
-            mGThreadHashMapTasks.put(mGThreadIdCode++, gThread);
-            checkAddingGThread();
+            mQueueLinkedList.add(gThread);
+            checkAddingGThread(gThread);
         } catch (ScheduleGThreadException ex) {
             Logger.getLogger(ScheduleGThreadLinked.class.getName()).log(Level.SEVERE, null, ex);
             return SCHEDULE_LINK_REJECT_RESPONSE;
@@ -79,10 +80,10 @@ public class ScheduleGThreadLinked<T> extends GShedule<T>{
         return SCHEDULE_LINK_ACCEPT_RESPONSE;
     }
     
-    public int remove(long gthreadID){
-        if(mGThreadHashMapTasks.containsKey(gthreadID)){
-            if(!mGThreadHashMapTasks.get(gthreadID).isAlive()){
-                mGThreadHashMapTasks.remove(gthreadID);
+    public int remove(GThread<T> gThread){
+        if(mQueueLinkedList.contains(gThread)){
+            if(!gThread.isAlive()){
+                mQueueLinkedList.remove(gThread);
                                 
                 return SCHEDULE_LINK_ACCEPT_RESPONSE;
             }else{
@@ -93,8 +94,8 @@ public class ScheduleGThreadLinked<T> extends GShedule<T>{
         }
     }
     
-    private void checkAddingGThread(){
-        if(mSheduleLinkState == SCHEDULE_LINK_TASKS_FINISHED){
+    private void checkAddingGThread(GThread<T> gThread){
+        if(mSheduleLinkState == SCHEDULE_LINK_TASKS_FINISHED && !gThread.isAlive()){
                 start();                
         }
     }
@@ -102,15 +103,9 @@ public class ScheduleGThreadLinked<T> extends GShedule<T>{
      * Called when each one of tasks is terminated.
      * @param gthreadID 
      */
-    public void onItemFinished(long gthreadID){
-        mGThreadHashMapTasks.remove(mGThreadHashMapTasks.containsKey(gthreadID));
+    public void onItemFinished(GThread<T> gThread){
+        mQueueLinkedList.remove(gThread);
         updateWorkers(DECREASE_ONE_WORKER_FROM_WORKERS);        
-    }
-    
-    private void identifyGThreadAsTasks(GThread<T>... gThreads){
-        for(GThread<T> gThread: gThreads){
-            mGThreadHashMapTasks.put(mGThreadIdCode++, gThread);
-        }
     }
 
     private void checkGThreadValidationAt(GThread<T> gThread) throws ScheduleGThreadException {
@@ -120,6 +115,12 @@ public class ScheduleGThreadLinked<T> extends GShedule<T>{
                 case GThread.G_THREAD_TERMINATED:
                     throw new ScheduleGThreadException(ScheduleGThreadException.TERMINATED_THREAD_EXCEPTION_MESSAGE);
             }
+    }
+    
+    private void identifyGThreads(GThread<T>... gThreads){
+        for(GThread<T> gThread : gThreads){
+            mQueueLinkedList.add(gThread);
+        }
     }
        
 }

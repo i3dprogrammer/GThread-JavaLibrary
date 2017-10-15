@@ -142,34 +142,16 @@ public class Test {
                 return "t7";
             }
         };
-        /**ScheduleGThreadLinked<String> scheduleGThreadLinked = new ScheduleGThreadLinked<>(2, t1,t2, t3);
+        ScheduleGThreadLinked<String> scheduleGThreadLinked = new ScheduleGThreadLinked<>(2, t1,t2, t3);
         scheduleGThreadLinked.start();
         Thread.sleep(1000);
         scheduleGThreadLinked.add(t4);
         scheduleGThreadLinked.add(t5);
+        scheduleGThreadLinked.remove(t1);
         t5.join();
         Thread.sleep(3000);
         scheduleGThreadLinked.add(t6);
-        scheduleGThreadLinked.add(t7); **/
-        Queue<String> s= new LinkedList<>();
-        s.add("a");
-        s.add("b");
-        s.add("c");
-        s.add("d");
-        s.add("e");
-        s.add("f");
-        s.add("g");
-        s.add("h");
-        int i = 1;
-        while(s.iterator().hasNext()){
-            Util.println(s.poll());
-            i++;
-            if(i == 5){
-                
-                s.add("c");
-            }
-        }
-        s.
-        Util.println(String.valueOf(s.size()));
+        
+        scheduleGThreadLinked.add(t7); 
     }
 }
