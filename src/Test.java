@@ -140,13 +140,18 @@ public class Test {
                 return "t7";
             }
         };
-        
-           t1.start();
-           t1.join();
-           t2.start();
-           t5.start();
-           t5.join();
-           t3.start();
+        try{
+            ScheduleGThread<String> scheduleGThread = new ScheduleGThread<String>(3, t1, t2, t3, t4, t5, t6, t7) {
+                @Override
+                public void onScheduleFinished() {
+                        Util.println("shedule done");
+
+                }
+            };
+            scheduleGThread.start();
+        }catch(ScheduleGThreadException e){
+            Util.println(e.getMessage());
+        }
         
         
     }

@@ -19,8 +19,10 @@
  * @author mohamednagy
  */
 public class ScheduleGThreadException extends Exception{
-    
+    // Exception message for thread schedule when pass theard
+    // have run before.
     public static final String ALIVE_THREAD_EXCEPTION_MESSAGE = "You set running thread in schedule group";
+    // Exception message for thread schedule then pass a terminated thread.
     public static final String TERMINATED_THREAD_EXCEPTION_MESSAGE = "You're set terminated thread in schedule group";
     
     public ScheduleGThreadException(){
