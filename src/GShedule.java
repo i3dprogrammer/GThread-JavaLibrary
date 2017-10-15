@@ -9,6 +9,10 @@
  * @author mohamednagy
  */
 public abstract class GShedule<T> {
+    // Starting Schedule state value when schedule start successfuly.
+    public static final int G_SCHEDULE_START_SUCCESSFULLY = 1;
+    // Starting Schedule state value when schedule failed to start.
+    public static final int G_SCHEDULE_START_FAILED = -1;
     // Number of worker when schedule is created.
     protected static final int INTIAL_WORKERS_NUMBER = 0;
     // Decrease only one worker from the current workers.
@@ -55,11 +59,12 @@ public abstract class GShedule<T> {
        mCurrentWorker += workersChanger; 
     }
     
+   
     /**
      * Start schedules processes. Check if all threads in idle mode or not.
      * 
      * @throws ScheduleGThreadException Exception throws when the list of gthreads
      *                                  contain threads which run before or is terminated
      */
-    protected abstract void start() throws ScheduleGThreadException;
+    protected abstract int start() throws ScheduleGThreadException;
 }

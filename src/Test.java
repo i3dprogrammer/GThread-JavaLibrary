@@ -140,7 +140,6 @@ public class Test {
                 return "t7";
             }
         };
-        try{
             ScheduleGThread<String> scheduleGThread = new ScheduleGThread<String>(3, t1, t2, t3, t4, t5, t6, t7) {
                 @Override
                 public void onScheduleFinished() {
@@ -148,10 +147,9 @@ public class Test {
 
                 }
             };
+            t1.start();
             scheduleGThread.start();
-        }catch(ScheduleGThreadException e){
-            Util.println(e.getMessage());
-        }
+    
         
         
     }

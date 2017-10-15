@@ -26,10 +26,8 @@ public abstract class ScheduleGThread<T> extends GShedule<T>{
      * 
      * @param workers   Number of workers who are going to execute tasks
      * @param gThread   List of gthreads which must have execute as schedule way
-     * @throws ScheduleGThreadException Exception throws when the list of gthreads
-     *                                  contain threads which run before or is terminated
      */
-    public ScheduleGThread(int workers, GThread<T>... gThread) throws ScheduleGThreadException{
+    public ScheduleGThread(int workers, GThread<T>... gThread){
         super(workers, gThread);
         init();
     }
@@ -48,13 +46,15 @@ public abstract class ScheduleGThread<T> extends GShedule<T>{
     }
     /**
      * Start schedule process. Check if all threads in idle mode or not.
-     * 
-     * @throws ScheduleGThreadException Exception throws when the list of gthreads
-     *                                  contain threads which run before or is terminated
      */
     @Override
-    public void start() throws ScheduleGThreadException{
-        checkGThreadValidation();
+    public int start(){
+        try {
+            checkGThreadValidation();
+        } catch (ScheduleGThreadException ex) {
+            Logger.getLogger(ScheduleGThread.class.getName()).log(Level.SEVERE, null, ex);
+            return GShedule.G_SCHEDULE_START_FAILED;
+        }
 
         mScheduleGThread = new Thread(() -> {
             for (GThread<T> M_GTHREADS_ARRAY1 : M_GTHREADS_ARRAY) {
@@ -66,6 +66,8 @@ public abstract class ScheduleGThread<T> extends GShedule<T>{
             allTasksExceuted();
         });
         mScheduleGThread.start();
+        
+        return GShedule.G_SCHEDULE_START_SUCCESSFULLY;
     }
     /**
      * Called when each one of tasks is terminated.
