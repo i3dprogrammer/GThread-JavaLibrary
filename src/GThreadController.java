@@ -1,4 +1,5 @@
 
+import com.sun.org.apache.xalan.internal.xsltc.compiler.util.Util;
 import jdk.nashorn.internal.parser.TokenType;
 
 /*
@@ -28,10 +29,12 @@ public abstract class GThreadController<T>{
     private Long mGThreadId;
     
     protected void notifyChanging(){
-        if(mScheduleGThread != null)
+        if(mScheduleGThread != null){
             mScheduleGThread.onItemFinished();
-        else
+
+        }else{
             mScheduleGThreadLinked.onItemFinished(mGThreadId);
+        }
     }
     
     

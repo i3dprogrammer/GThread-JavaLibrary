@@ -32,6 +32,7 @@ public abstract class GShedule<T> {
     protected GShedule(int workers, GThread<T>... gThread){
         M_WORKERS_LIMIT = workers;
         M_GTHREADS_ARRAY = gThread;
+        mCurrentWorker = 0;
     }
     
     /**

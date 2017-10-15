@@ -1,3 +1,6 @@
+
+import com.sun.org.apache.xalan.internal.xsltc.compiler.util.Util;
+
 /*
  * Copyright [2017] Mohamed Nagy Mostafa Mohamed
  *
@@ -65,6 +68,7 @@ public abstract class GThread<T> extends GThreadController implements GThreadAct
                 setGThreadState(G_THREAD_RUNNING);
                 handlingProgress();
                 break;
+            case G_THREAD_WITH_LINKED_SCHEDULE:
             case G_THREAD_WITH_SCHEDULE:
                 setGThreadState(G_THREAD_RUNNING);
                 handlingScheduleProgress();

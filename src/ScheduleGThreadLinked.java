@@ -1,6 +1,8 @@
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,21 +19,24 @@ import java.util.logging.Logger;
 public class ScheduleGThreadLinked<T> extends GShedule<T>{
     public static final int SCHEDULE_LINK_ACCEPT_RESPONSE  = 1;
     public static final int SCHEDULE_LINK_REJECT_RESPONSE = -1;
+    public static final int S
     public static final int SCHEDULE_LINK_TASKS_FINISHED = 4;
     public static final int SCHEDULE_LINK_TASKS_RUNNING = 2;
     public static final int SCHEDULE_LINK_TASKS_IDLE = 3;
     
-    private HashMap<Long, GThread<T>> mGThreadHashMapTasks;
+    private Queue<GThread<T>> mQueueGThreads;
     private long mGThreadIdCode = 0;
     private int mSheduleLinkState;
     
-    public ScheduleGThreadLinked(int workers, GThread<T>... gThread) throws ScheduleGThreadException {
+    public ScheduleGThreadLinked(int workers, GThread<T>... gThread){
         super(workers, gThread);
-        mSheduleLinkState = SCHEDULE_LINK_TASKS_IDLE;
         init(gThread);
     }
     
     private void init(GThread<T>... gThread){
+        mQueueGThreads = new LinkedList<>();
+        mSheduleLinkState = SCHEDULE_LINK_TASKS_IDLE;
+
         identifyGThreadAsTasks(gThread);
     }
 
@@ -46,8 +51,9 @@ public class ScheduleGThreadLinked<T> extends GShedule<T>{
         }
         
         mScheduleGThread = new Thread(() -> {
-            for (GThread<T> M_GTHREADS_ARRAY1 : M_GTHREADS_ARRAY) {
-                M_GTHREADS_ARRAY1.start();
+            while(synchronizeQueue())
+                gThread.setScheduleGThreadLinked(this, gThread.getGThreadId());
+                gThread.start();
                 updateWorkers(INCREASE_ONE_WORKER_FROM_WORKERS);
                 while(mCurrentWorker >= M_WORKERS_LIMIT);
             }
@@ -115,7 +121,5 @@ public class ScheduleGThreadLinked<T> extends GShedule<T>{
                     throw new ScheduleGThreadException(ScheduleGThreadException.TERMINATED_THREAD_EXCEPTION_MESSAGE);
             }
     }
-    
-    
-   
+       
 }

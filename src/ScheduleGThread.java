@@ -39,9 +39,6 @@ public abstract class ScheduleGThread<T> extends GShedule<T>{
      *                                  contain threads which run before or is terminated
      */
     private void init(){
-        for(final GThread<T> G_THREAD : M_GTHREADS_ARRAY)
-            identifyGThread(G_THREAD);
-        
         mCurrentWorker = INTIAL_WORKERS_NUMBER;
     }
     /**
@@ -57,8 +54,9 @@ public abstract class ScheduleGThread<T> extends GShedule<T>{
         }
 
         mScheduleGThread = new Thread(() -> {
-            for (GThread<T> M_GTHREADS_ARRAY1 : M_GTHREADS_ARRAY) {
-                M_GTHREADS_ARRAY1.start();
+            for (GThread<T> gThread : M_GTHREADS_ARRAY) {
+                identifyGThread(gThread);
+                gThread.start();
                 updateWorkers(INCREASE_ONE_WORKER_FROM_WORKERS);
                 while(mCurrentWorker >= M_WORKERS_LIMIT);
             }
