@@ -19,23 +19,7 @@ import java.util.logging.Logger;
  */
 
 
-public abstract class ScheduleGThread<T>{
-    // Number of worker when schedule is created.
-    private static final int INTIAL_WORKERS_NUMBER = 0;
-    // Decrease only one worker from the current workers.
-    private static final int DECREASE_ONE_WORKER_FROM_WORKERS = -1;
-    // Increase only one worker from the current workers.
-    private static final int INCREASE_ONE_WORKER_FROM_WORKERS = 1;
-    // Array of gthread which must have excuted as schedule way.
-    private final GThread<T>[] M_GTHREADS_ARRAY;
-    // Limitation number of workers which execute schedule tasks
-    // at the same time.
-    private final int M_WORKERS_LIMIT;
-    // Original thread of Schedule gthread.
-    private Thread mScheduleGThread; 
-    // Number of current workers which execute tasks.
-    private int mCurrentWorker;
-    
+public abstract class ScheduleGThread<T> extends GShedule<T>{
     /**
      * ScheduleGThread constructor inwhich initialize an initial state of
      * schedule.
@@ -46,8 +30,7 @@ public abstract class ScheduleGThread<T>{
      *                                  contain threads which run before or is terminated
      */
     public ScheduleGThread(int workers, GThread<T>... gThread) throws ScheduleGThreadException{
-        M_WORKERS_LIMIT = workers;
-        M_GTHREADS_ARRAY = gThread;
+        super(workers, gThread);
         init();
     }
     /**
@@ -69,6 +52,7 @@ public abstract class ScheduleGThread<T>{
      * @throws ScheduleGThreadException Exception throws when the list of gthreads
      *                                  contain threads which run before or is terminated
      */
+    @Override
     public void start() throws ScheduleGThreadException{
         checkGThreadValidation();
 
@@ -90,34 +74,11 @@ public abstract class ScheduleGThread<T>{
         updateWorkers(DECREASE_ONE_WORKER_FROM_WORKERS);        
     }
     /**
-     * Synchronize process inwhich workers increase when
-     * new task is avaliable and decrease when task is terminated.
-     * @param workersChanger    State of workers changing
-     */
-    private synchronized void updateWorkers(int workersChanger){
-       mCurrentWorker += workersChanger; 
-    }
-    /**
-     * To sure there's no terminated gthread or running gthread is
-     * Attached to shedule before running.
-     * @throws ScheduleGThreadException 
-     */
-    private void checkGThreadValidation() throws ScheduleGThreadException{
-        for(GThread<T> gThread : M_GTHREADS_ARRAY){
-            switch(gThread.gthreadState()){
-                case GThread.G_THREAD_RUNNING:
-                    throw new ScheduleGThreadException(ScheduleGThreadException.ALIVE_THREAD_EXCEPTION_MESSAGE);
-                case GThread.G_THREAD_TERMINATED:
-                    throw new ScheduleGThreadException(ScheduleGThreadException.TERMINATED_THREAD_EXCEPTION_MESSAGE);
-            }
-        }
-    }
-    /**
      * Set schedule as a parent to specific gthread.
      * @param gThread   Tasks which are going to execute in schedule
      */
     private void identifyGThread(GThread<T> gThread){
-        gThread.setScheduleThread(this);
+        gThread.setScheduleGThread(this);
    }
     /**
      * insure that there's no task is work.

@@ -1,3 +1,6 @@
+
+import jdk.nashorn.internal.parser.TokenType;
+
 /*
  * Copyright [2017] Mohamed Nagy Mostafa Mohamed
  *
@@ -21,21 +24,27 @@ public abstract class GThreadController<T>{
     protected static final int G_THREAD_WITH_LINKED_SCHEDULE = 3;
     
     private ScheduleGThread<T> mScheduleGThread;
-  
+    private ScheduleGThreadLinked<T> mScheduleGThreadLinked;
     
     protected void notifyChanging(){
         if(mScheduleGThread != null)
             mScheduleGThread.onItemFinished();
     }
     
-    protected void setScheduleThread(ScheduleGThread<T> scheduleGThread){
+    protected void setScheduleGThread(ScheduleGThread<T> scheduleGThread){
         mScheduleGThread = scheduleGThread;
     }
     
+    protected void setScheduleGThreadLinked(ScheduleGThreadLinked<T> scheduleGThreadLinked){
+        mScheduleGThreadLinked = scheduleGThreadLinked;
+    }
+    
     protected int getGthreadType(){
-        if(mScheduleGThread == null)
-            return G_THREAD_WITHOUT_SCHEDULE;
-        else
+        if(mScheduleGThread != null)
             return G_THREAD_WITH_SCHEDULE;
+        else if(mScheduleGThreadLinked != null)
+            return G_THREAD_WITH_LINKED_SCHEDULE;
+        else
+            return G_THREAD_WITHOUT_SCHEDULE;
     }
 }

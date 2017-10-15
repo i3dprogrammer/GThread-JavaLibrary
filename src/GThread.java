@@ -21,7 +21,7 @@
  * @param <T>   Type of object which you're going to get back after GThread done
  *              it's work completely
  */
-public abstract class GThread<T> extends GThreadController implements GSheduler<T>{
+public abstract class GThread<T> extends GThreadController implements GThreadActors<T>{
     
     // The value of GThread name when it's not have specific name.
     private static final String M_EMPTY_VALUE = "";

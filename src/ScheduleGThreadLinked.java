@@ -11,7 +11,7 @@ import java.util.ArrayList;
  *
  * @author mohamednagy
  */
-public abstract class ScheduleGThreadLinked<T> extends ScheduleGThread<T>{
+public class ScheduleGThreadLinked<T> {
     
     private long mScheduleGThreadId;
     

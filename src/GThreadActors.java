@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-public interface GSheduler<T> {
+public interface GThreadActors<T> {
     
     /**
      * Called start method in GThread is called, It contains the GThread
