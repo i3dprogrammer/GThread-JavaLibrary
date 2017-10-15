@@ -14,11 +14,22 @@
  * limitations under the License.
  */
 
-/**
- *
- * @author mohamednagy
- */
 public interface GSheduler<T> {
+    /**
+     * Called when GThread have been finished it's process and 
+     * return the process result as a parameter to make programmer
+     * have ability to access on the GThread output and handle with it
+     * simply.
+     * 
+     * @param object    The output of the GThread process
+     */
     abstract void onFinished(T object);
+    /**
+     * Called start method in GThread is called, It contains the GThread
+     * process which GThread have to do and return the output of these process
+     * after GThread process finished.
+     * 
+     * @return  Result object of GThread processes.
+     */
     abstract T onProgress();
 }

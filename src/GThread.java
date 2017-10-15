@@ -20,6 +20,7 @@ public abstract class GThread<T> extends GThreadController implements GSheduler<
     private Thread mThread;
     private String mGThreadName;
     private boolean mTerminated;
+    private int mGThreadId;
     
     public GThread(){
         mTerminated = false;
@@ -32,7 +33,7 @@ public abstract class GThread<T> extends GThreadController implements GSheduler<
     private void handlingProgress(){ 
         mThread = new Thread(()->{
             T object = onProgress();
-            notifyChanging();
+            notifyChanging(mGThreadId);
             mTerminated = true;
             onFinished(object);
         });
@@ -87,4 +88,12 @@ public abstract class GThread<T> extends GThreadController implements GSheduler<
     public boolean isTerminated(){
         return mTerminated;
     }
+
+    @Override
+    protected void setScheduleThread(ScheduleGThread scheduleGThread, int id) {
+        mGThreadId = id;
+        super.setScheduleThread(scheduleGThread, id); 
+    }
+    
+    
 }

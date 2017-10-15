@@ -23,12 +23,12 @@ public abstract class GThreadController<T>{
     private ScheduleGThread<T> mScheduleGThread;
 
     
-    protected void notifyChanging(){
+    protected void notifyChanging(int gthreadID){
         if(mScheduleGThread != null)
-            mScheduleGThread.onItemFinished();
+            mScheduleGThread.onItemFinished(gthreadID);
     }
     
-    protected void setScheduleThread(ScheduleGThread<T> scheduleGThread){
+    protected void setScheduleThread(ScheduleGThread<T> scheduleGThread, int id){
         mScheduleGThread = scheduleGThread;
     }
 }
