@@ -70,7 +70,7 @@ Features
      
 - To demystify the first parameter of ScheduleGThread let's take an example about how it really work.
 
-- Let’s assume that you have <b>10 GThreads</b> and you want to run them <b>two by two<b> in order.
+- Let’s assume that you have <b>10 GThreads</b> and you want to run them <b>two by two</b> in order.
 
 - <p>Initial state of Schedule when you create instance and you don't launch it yet. (Waiting: GThreads are hold but in idle state | In Working Stage: Current GThreads which are running| Finished: GThreads which finished their progress)<p>
 
