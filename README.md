@@ -158,7 +158,7 @@ It's similer to SheduleGThread but with more dynamic. In ScheduleGThread you add
 <h3> Schedule GThread Exception </h3>
 <ul>
 <li>
-<b>This exception happen when you try to add a running or terminated gthread to any container (SheduleGThread - SheduleGThreadLinked).</b>
+This exception happen when you try to add a running or terminated gthread to any container (SheduleGThread - SheduleGThreadLinked).
 </li>
 </ul>
 
