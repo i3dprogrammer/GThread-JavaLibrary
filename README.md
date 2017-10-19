@@ -141,11 +141,10 @@ It's similer to SheduleGThread, but more dynamic. In ScheduleGThread you initial
 <h3>Methods</h3>
 <ul>
 <li>
-<b>start()</b>: Starts the ScheduleGThreadLinked. <b>Returns 1 if ScheduleGThreadLinked started successfully otherwise returns -1. (We are going to talk about this point in details later)</n></b>
+<b>start()</b>: Starts the ScheduleGThreadLinked. Returns 1 if ScheduleGThreadLinked started successfully otherwise returns -1. (We are going to talk about this point in details later).
 </li>
 <li>
-<b>add(GThread gthread)</b>: To add new GThread to ScheduleGThreadLinked. <b>Returns 1 when adding process is succeeded otherwise returns -1. (We are going to talk about this point in details later)</b> 
-(Add process accept when GThread what you add was not running before or terminated)
+<b>add(GThread gthread)</b>: To add new GThread to ScheduleGThreadLinked. Returns 1 when adding process is succeeded otherwise returns -1. (We are going to talk about this point in details later).
 </li>
 <li>
 <b>remove(GThread gthread)</b>: To remove existing GThread. Returns 1 when removing process is succeed and returns -1 when you try to remove a running GThread.
@@ -156,7 +155,7 @@ It's similer to SheduleGThread, but more dynamic. In ScheduleGThread you initial
 <h3> ScheduleGThread Exception </h3>
 <ul>
 <li>
-<b>This exception happen when you try to add a running or terminated GThread to any container (SheduleGThread - SheduleGThreadLinked).</b>
+<b>This exception happen when you try to add a running or terminated GThread to any container (SheduleGThread - SheduleGThreadLinked) at any point.</b>
 </li>
 </ul>
 
